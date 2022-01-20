@@ -6,26 +6,22 @@
   <object class="GtkWindow" id="mainwindow">
     <property name="halign">baseline</property>
     <child>
-      <object class="GtkGrid">
+      <object class="GtkBox" id="mainbox">
         <child>
-          <object class="GtkTreeView" id="treeview">
-            <property name="activate-on-single-click">True</property>
-            <property name="enable-grid-lines">both</property>
-            <layout>
-              <property name="column">0</property>
-              <property name="row">0</property>
-            </layout>
+          <object class="GtkListBox" id="newlist">
+            <property name="has-tooltip">True</property>
+            <property name="tooltip-text">you are hovering over the listbox</property>
           </object>
         </child>
         <child>
           <object class="GtkButton" id="clickme">
             <property name="label">Click Me!</property>
-            <layout>
-              <property name="column">1</property>
-              <property name="column-span">1</property>
-              <property name="row">1</property>
-              <property name="row-span">1</property>
-            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="GtkVolumeButton" id="cool">
+            <property name="accessible-role">menu-bar</property>
+            <property name="value">0.5</property>
           </object>
         </child>
       </object>

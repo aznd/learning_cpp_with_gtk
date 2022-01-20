@@ -27,7 +27,15 @@ void on_app_activate()
     return;
   }
 
-  auto treeview = refBuilder->get_widget<Gtk::Widget>("treeview");
+  auto mainbox = refBuilder->get_widget<Gtk::Box>("mainbox");
+  auto mainlist = refBuilder->get_widget<Gtk::ListBox>("newlist");
+  //auto mainvolume = refBuilder->get_widget<Gtk::Widget>("cool");
+  Gtk::VolumeButton *mainvolume = refBuilder->get_widget<Gtk::VolumeButton>("cool");
+
+  // Correct way to programtically create a widget.
+  Gtk::Label *newtextlabel = Gtk::manage(new Gtk::Label("other"));
+  newtextlabel->set_text("Test");
+  mainlist->append(*newtextlabel);
 
   // Get the GtkBuilder-instantiated button, and connect a signal handler:
   auto pButton = refBuilder->get_widget<Gtk::Button>("clickme");

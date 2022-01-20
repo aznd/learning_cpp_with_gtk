@@ -3,14 +3,28 @@
 
 using namespace std;
 
+
 namespace
 {
 Gtk::Window* pWindow = nullptr;
 Glib::RefPtr<Gtk::Application> app;
+Gtk::VolumeButton *mainvolume;
 
 void on_button_clicked()
 {
   cout << "You clicked me." << endl;
+  cout << mainvolume->get_value();
+}
+
+void call_exec(int plusorminus)
+{
+  if (plusorminus == 0)
+  {
+    system("pactl set-sink-volume 0 +3%");
+  }
+  else{
+    system("pactl set-sink-volume 0 -3%");
+  }
 }
 
 void on_app_activate()
@@ -27,10 +41,22 @@ void on_app_activate()
     return;
   }
 
-  auto mainbox = refBuilder->get_widget<Gtk::Box>("mainbox");
-  auto mainlist = refBuilder->get_widget<Gtk::ListBox>("newlist");
-  //auto mainvolume = refBuilder->get_widget<Gtk::Widget>("cool");
-  Gtk::VolumeButton *mainvolume = refBuilder->get_widget<Gtk::VolumeButton>("cool");
+  Gtk::Box *mainbox = refBuilder->get_widget<Gtk::Box>("mainbox");
+  Gtk::ListBox *mainlist = refBuilder->get_widget<Gtk::ListBox>("newlist");
+  mainvolume = refBuilder->get_widget<Gtk::VolumeButton>("cool");
+
+  Gtk::Adjustment *adj;
+  adj->set_step_increment(0.1);
+  // HELP I DONT GET THIS IT LITERALLY IS A GTK::ADJUSTMENT
+  mainvolume->set_adjustment(adj);
+
+
+  // Get the plus/minus buttons from the volume widget and attach a signal handler
+  Gtk::Button *plusbtn = mainvolume->get_plus_button();
+  plusbtn->signal_clicked().connect([] () { call_exec(0); });
+
+  Gtk::Button *minusbtn = mainvolume->get_minus_button();
+  minusbtn->signal_clicked().connect([] () { call_exec(1); });
 
   // Correct way to programtically create a widget.
   Gtk::Label *newtextlabel = Gtk::manage(new Gtk::Label("other"));
@@ -38,12 +64,13 @@ void on_app_activate()
   mainlist->append(*newtextlabel);
 
   // Get the GtkBuilder-instantiated button, and connect a signal handler:
-  auto pButton = refBuilder->get_widget<Gtk::Button>("clickme");
+  Gtk::Button *pButton = refBuilder->get_widget<Gtk::Button>("clickme");
   if (pButton)
     pButton->signal_clicked().connect([] () { on_button_clicked(); });
 
   app->add_window(*pWindow);
   pWindow->show();
+  pWindow->set_default_size(900, 500);
 }
 } // anonymous namespace
 

@@ -5,58 +5,37 @@ using namespace std;
 
 namespace
 {
-Gtk::Window* pDialog = nullptr;
+Gtk::Window* pWindow = nullptr;
 Glib::RefPtr<Gtk::Application> app;
 
 void on_button_clicked()
 {
-  if (pDialog)
-    pDialog->hide(); //hide() will cause Gtk::Application::run() to end.
+  cout << "You clicked me." << endl;
 }
 
 void on_app_activate()
 {
   // Load the GtkBuilder file and instantiate its widgets:
   auto refBuilder = Gtk::Builder::create();
-  try
+  refBuilder->add_from_file("spotgtk.glade");
+
+  // Get the main window
+  pWindow = refBuilder->get_widget<Gtk::Window>("mainwindow");
+  if (!pWindow)
   {
-    refBuilder->add_from_file("spotgtk.glade");
-  }
-  catch(const Glib::FileError& ex)
-  {
-    cerr << "FileError: " << ex.what() << endl;
-    return;
-  }
-  catch(const Glib::MarkupError& ex)
-  {
-    cerr << "MarkupError: " << ex.what() << endl;
-    return;
-  }
-  catch(const Gtk::BuilderError& ex)
-  {
-    cerr << "BuilderError: " << ex.what() << endl;
+    cerr << "Could not get the main window." << endl;
     return;
   }
 
-  // Get the GtkBuilder-instantiated dialog:
-  pDialog = refBuilder->get_widget<Gtk::Window>("mainwindow");
-  if (!pDialog)
-  {
-    cerr << "Could not get the dialog" << endl;
-    return;
-  }
+  auto treeview = refBuilder->get_widget<Gtk::Widget>("treeview");
 
   // Get the GtkBuilder-instantiated button, and connect a signal handler:
-  auto pButton = refBuilder->get_widget<Gtk::Button>("mainbutton");
+  auto pButton = refBuilder->get_widget<Gtk::Button>("clickme");
   if (pButton)
     pButton->signal_clicked().connect([] () { on_button_clicked(); });
 
-  // It's not possible to delete widgets after app->run() has returned.
-  // Delete the dialog with its child widgets before app->run() returns.
-  pDialog->signal_hide().connect([] () { delete pDialog; });
-
-  app->add_window(*pDialog);
-  pDialog->show();
+  app->add_window(*pWindow);
+  pWindow->show();
 }
 } // anonymous namespace
 

@@ -43,11 +43,10 @@ void on_app_activate()
 
   Gtk::Box *mainbox = refBuilder->get_widget<Gtk::Box>("mainbox");
   Gtk::ListBox *mainlist = refBuilder->get_widget<Gtk::ListBox>("newlist");
-  mainvolume = refBuilder->get_widget<Gtk::VolumeButton>("cool");
+  auto mainvolume = refBuilder->get_widget<Gtk::VolumeButton>("cool");
 
-  Gtk::Adjustment *adj;
-  adj->set_step_increment(0.1);
-  // HELP I DONT GET THIS IT LITERALLY IS A GTK::ADJUSTMENT
+  shared_ptr<Gtk::Adjustment> adj{};
+  adj->set_step_increment(0.05);
   mainvolume->set_adjustment(adj);
 
 
